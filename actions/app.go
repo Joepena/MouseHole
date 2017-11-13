@@ -24,6 +24,8 @@ var T *i18n.Translator
 // application.
 func App() *buffalo.App {
 	if app == nil {
+		models.GetDBInstance() // init DB
+
 		app = buffalo.New(buffalo.Options{
 			Env:         ENV,
 			SessionName: "_mouse_hole_session",
@@ -42,10 +44,6 @@ func App() *buffalo.App {
 		// Remove to disable this.
 		app.Use(csrf.New)
 
-		// Wraps each request in a transaction.
-		//  c.Value("tx").(*pop.PopTransaction)
-		// Remove to disable this.
-		app.Use(middleware.PopTransaction(models.DB))
 
 		// Setup and use translations:
 		var err error
