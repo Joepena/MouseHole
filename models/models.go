@@ -1,14 +1,14 @@
 package models
 
 import (
-	"gopkg.in/mgo.v2"
 	"fmt"
+	log "github.com/sirupsen/logrus"
+	"gopkg.in/mgo.v2"
 	"sync"
-	"log"
-	"reflect"
 )
 
 const MONGOD_URL = "localhost:27017"
+
 var (
 	once       sync.Once
 	dbInstance DB
@@ -16,30 +16,45 @@ var (
 
 type DB struct {
 	session *mgo.Session
+	logger  *log.Entry
 }
 
 type ReadRequest struct {
-	DbName         string
-	CollectionName string
-	//DataType           reflect.Type
+	dBName         string
+	collectionName string
+	logger         *log.Entry
 }
 
-func (db *DB) Read(rR *ReadRequest) []Event {
-	log.Println(rR)
-	collection := db.session.DB(rR.DbName).C(rR.CollectionName) // maybe can cache this later?
-	var result []Event
-	err := collection.Find(nil).All(&result)
-	if err != nil {
-		log.Fatal(err)
-	}
+type WriteRequest struct {
+	DbName         string
+	CollectionName string
+	Data           interface{}
+}
 
-	return result
+func (db *DB) Write(wR *WriteRequest) {
+	collection := db.session.DB(wR.DbName).C(wR.CollectionName) // maybe can cache this later?
+	err := collection.Insert(wR.Data)
+	if err != nil {
+		log.Fatal("failed to insert data into db. dbName: %v, collectionName: %v, data: %v, error: %v", wR.DbName, wR.CollectionName, wR.Data, err)
+	}
+}
+
+func (db *DB) CreateCappedCollection(dbName string, collectionName string, capacity int) {
+	collectionInfo := &mgo.CollectionInfo{
+		Capped:   true,
+		MaxBytes: capacity,
+	}
+	err := db.session.DB(dbName).C(collectionName).Create(collectionInfo)
+	if err != nil {
+		log.WithField("Function", "CreateCappedCollection").Error(err)
+	}
 }
 
 func GetDBInstance() *DB {
 	once.Do(func() {
 		dbInstance = DB{
 			session: establishMongoDBSession(),
+			logger:  log.WithField("Component", "DB"),
 		}
 	})
 
@@ -57,8 +72,24 @@ func establishMongoDBSession() *mgo.Session {
 	return session
 }
 
-func retrieveTypeSlice(t reflect.Type, slice interface{}){
-	if t.Name() == "Event" {
-		slice = make([]Event, 10)
+func NewReadRequest() ReadRequest {
+	return ReadRequest{
+		logger: log.WithField("Component", "readRequest"),
 	}
+}
+
+func (rR *ReadRequest) SetDB(dBName string) {
+	rR.dBName = dBName
+}
+
+func (rR *ReadRequest) DBName() string {
+	return rR.dBName
+}
+
+func (rR *ReadRequest) SetCollection(collectionName string) {
+	rR.collectionName = collectionName
+}
+
+func (rR *ReadRequest) CollectionName() string {
+	return rR.collectionName
 }

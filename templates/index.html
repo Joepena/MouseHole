@@ -142,25 +142,9 @@
             <th>Tags</th>
           </tr>
         </thead>
-        <tbody id="log-table">
-
-          <%= for (event) in events { %>
-            <tr>
-              <td class="centered">
-                <%= event.Title %>
-              </td>
-              <td>
-                <%= event.Content %>
-              </td>
-              <td>
-                <%= event.Tags %>
-              </td>
-            </tr>
-          <% } %>
-
-        </tbody>
+        <tbody id="events-table" />
       </table>
     </div>
   </div>
 </div>
-<div class="foot"> <span> Powered by <a href="http://gobuffalo.io/">gobuffalo.io</a></span> </div>
+<div class="foot"/>
