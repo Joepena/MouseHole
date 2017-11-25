@@ -62,7 +62,6 @@ func App() *buffalo.App {
 			app.Stop(err)
 		}
 
-		app.Use(SetCurrentUser)
 		app.Use(ReadRequestAssigner)
 		app.Use(T.Middleware())
 

@@ -1,7 +1,7 @@
 package api
 
 const (
-	EventType requestType = "event"
+	EventType requestType = "events" // TODO: Consolidate this and actions/eventSocket.EventsCollection
 )
 
 var requestRouter = requestRouterType{

@@ -18,11 +18,11 @@ type User struct {
 // Create wraps up the pattern of encrypting the password and
 // running validations.
 func (u *User) Create(db *DB) error {
-	u.Email = strings.ToLower(u.Email)
-	ph, err := bcrypt.GenerateFromPassword([]byte(u.Password), bcrypt.DefaultCost)
-	if err != nil {
-		return err
-	}
-	u.PasswordHash = string(ph)
-	return db.session.DB("auth").C("users").Insert(u)
+	//u.Email = strings.ToLower(u.Email)
+	//ph, err := bcrypt.GenerateFromPassword([]byte(u.Password), bcrypt.DefaultCost)
+	//if err != nil {
+	//	return err
+	//}
+	//u.PasswordHash = string(ph)
+	//return db.session.DB("auth").C("users").Insert(u)
 }
