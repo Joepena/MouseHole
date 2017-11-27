@@ -1,10 +1,7 @@
 package models
 
 import (
-	"strings"
-
 	"github.com/satori/go.uuid"
-	"golang.org/x/crypto/bcrypt"
 )
 
 type User struct {
@@ -25,4 +22,5 @@ func (u *User) Create(db *DB) error {
 	//}
 	//u.PasswordHash = string(ph)
 	//return db.session.DB("auth").C("users").Insert(u)
+	return nil
 }

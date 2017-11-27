@@ -65,12 +65,16 @@ func App() *buffalo.App {
 		app.Use(ReadRequestAssigner)
 		app.Use(T.Middleware())
 
+		apiGroup := app.Group("/api")
+		apiGroup.Use(authenticateRequest)
+		apiGroup.GET("/", apiHandler)
+
 		// init hub for api package
 		go hub.Run()
 
 		app.GET("/events", eventsHandler)
 		app.GET("/events_socket", eventSocketHandler)
-		app.GET("/api", apiHandler)
+		app.GET("/token", getTokenHandler)
 		app.ServeFiles("/assets", assetsBox)
 	}
 
