@@ -39,6 +39,7 @@ func authenticateRequest(next buffalo.Handler) buffalo.Handler {
 		if claims, ok := token.Claims.(*MMClaims); ok && token.Valid {
 			log.Infof("user: %v, appName: %v, expiration: %v", claims.UserName, claims.ApplicationName, claims.StandardClaims.ExpiresAt)
 		} else {
+			return errors.New("Bad auth token!")
 			log.Error(err)
 		}
 

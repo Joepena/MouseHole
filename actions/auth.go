@@ -4,6 +4,7 @@ import (
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gobuffalo/buffalo"
 	log "github.com/sirupsen/logrus"
+	"github.com/joepena/mouse_hole/models"
 )
 
 // TODO: remove this from source later
@@ -15,7 +16,7 @@ type MMClaims struct {
 	jwt.StandardClaims
 }
 
-func getTokenHandler(c buffalo.Context) error {
+func getAuthToken(c buffalo.Context) (string, error) {
 	token := jwt.New(jwt.SigningMethodHS256)
 
 	claims := token.Claims.(jwt.MapClaims)
@@ -30,5 +31,29 @@ func getTokenHandler(c buffalo.Context) error {
 	// logic to attach token to user obj
 	log.Infof("token generated %v", tokenString)
 
+	return tokenString, nil
+}
+
+func createUserHandler(c buffalo.Context) error {
+	token, err := getAuthToken(c)
+	if err != nil {
+		log.Error(err)
+	}
+	h := c.Request().Header
+	u := models.User{
+		ID:           token,
+		Email:        h.Get("email"),
+		Password:     h.Get("password"),
+		PasswordHash: "",
+		DBName:       h.Get("application_name"),
+	}
+
+	err = u.Create(models.GetDBInstance())
+	if err != nil {
+		log.Error(err)
+		return err
+	}
+
 	return nil
 }
+

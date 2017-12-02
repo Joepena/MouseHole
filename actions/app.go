@@ -74,7 +74,7 @@ func App() *buffalo.App {
 
 		app.GET("/events", eventsHandler)
 		app.GET("/events_socket", eventSocketHandler)
-		app.GET("/token", getTokenHandler)
+		app.GET("/user", createUserHandler)
 		app.ServeFiles("/assets", assetsBox)
 	}
 

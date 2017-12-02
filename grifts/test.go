@@ -21,19 +21,19 @@ var _ = grift.Namespace("test", func() {
 		dB := models.GetDBInstance()
 		users := []models.User{
 			{
-				ID:       uuid.NewV4(),
+				ID:       "aaa.bbbb.ccc",
 				Email:    "xxx@xxx.com",
 				Password: "xxx",
 				DBName:   "app1",
 			},
 			{
-				ID:       uuid.NewV4(),
+				ID:       "bbb.ddd.zzz",
 				Email:    "yyy@xxx.com",
 				Password: "xxx",
 				DBName:   "app2",
 			},
 			{
-				ID:       uuid.NewV4(),
+				ID:       "vvv.rrrr.yyy",
 				Email:    "zzz@xxx.com",
 				Password: "xxx",
 				DBName:   "app3",
