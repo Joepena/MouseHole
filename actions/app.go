@@ -62,11 +62,11 @@ func App() *buffalo.App {
 			app.Stop(err)
 		}
 
-		app.Use(ReadRequestAssigner)
 		app.Use(T.Middleware())
 
 		apiGroup := app.Group("/api")
 		apiGroup.Use(authenticateRequest)
+		apiGroup.Use(ReadRequestAssigner)
 		apiGroup.GET("/", apiHandler)
 
 		// init hub for api package

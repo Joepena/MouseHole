@@ -14,8 +14,9 @@ const READ_REQUEST = "readRequest"
 func ReadRequestAssigner(next buffalo.Handler) buffalo.Handler {
 	return func(c buffalo.Context) error {
 		readReq := models.NewReadRequest()
+		u := c.Data()["User"].(models.User)
 
-		readReq.SetDB("test_app") // this is a test
+		readReq.SetDB(u.DBName) // this is a test
 		c.Set(READ_REQUEST, readReq)
 
 		err := next(c)
@@ -38,9 +39,14 @@ func authenticateRequest(next buffalo.Handler) buffalo.Handler {
 
 		if claims, ok := token.Claims.(*MMClaims); ok && token.Valid {
 			log.Infof("user: %v, appName: %v, expiration: %v", claims.UserName, claims.ApplicationName, claims.StandardClaims.ExpiresAt)
+			user, err := models.GetDBInstance().GetUser(tokenString)
+			if err != nil {
+				return err
+			}
+			c.Data()["User"] = user
+			log.Infof("User model was atttached: %v", c.Data()["User"].(models.User))
 		} else {
 			return errors.New("Bad auth token!")
-			log.Error(err)
 		}
 
 		err = next(c)

@@ -12,7 +12,7 @@ type Event struct {
 
 func processEventRequest(req Request) {
 	writeReq := &models.WriteRequest{
-		req.ApplicationName,
+		req.DbName,
 		req.RequestType.toString(),
 		&Event{
 			req.Title,

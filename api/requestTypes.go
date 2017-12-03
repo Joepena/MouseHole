@@ -19,9 +19,9 @@ type requestRouterType struct {
 }
 
 type Request struct {
-	ApplicationName string      `json:"ApplicationName"`
 	Title           string      `json:"Title"`
 	Content         string      `json:"Content"`
+	DbName          string      `json:"-"`
 	Tags            []string    `json:"Tags"`
 	RequestType     requestType `json:"ResponseType"`
 }

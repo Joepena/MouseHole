@@ -7,6 +7,7 @@ import (
 	"github.com/gobuffalo/buffalo"
 	"github.com/gorilla/websocket"
 	log "github.com/sirupsen/logrus"
+	"github.com/joepena/mouse_hole/models"
 )
 
 const (
@@ -28,6 +29,8 @@ type Client struct {
 
 	// The websocket connection.
 	conn *websocket.Conn
+	// dbName
+	dbName string
 }
 
 // readPump pumps messages from the websocket connection to the hub.
@@ -57,6 +60,8 @@ func (c *Client) readPump() {
 		if err != nil {
 			log.Println(err)
 		}
+		log.Infof("ADDED DBNAME %v", c.dbName)
+		req.DbName = c.dbName
 		c.hub.requestQueue <- req
 	}
 }
@@ -67,8 +72,8 @@ func RegisterClient(hub *Hub, c buffalo.Context) {
 	if err != nil {
 		log.WithField("Function", "RegisterClient").Error(err)
 	}
-
-	client := &Client{hub: hub, conn: wsConn}
+	uDbName := c.Data()["User"].(models.User).DBName
+	client := &Client{hub: hub, conn: wsConn, dbName: uDbName}
 	client.hub.register <- client
 
 	// Allow collection of memory referenced by the caller by doing all work in

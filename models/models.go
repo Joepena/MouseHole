@@ -5,6 +5,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	"gopkg.in/mgo.v2"
 	"sync"
+	"gopkg.in/mgo.v2/bson"
 )
 
 const MONGOD_URL = "localhost:27017"
@@ -48,6 +49,15 @@ func (db *DB) CreateCappedCollection(dbName string, collectionName string, capac
 	if err != nil {
 		log.WithField("Function", "CreateCappedCollection").Error(err)
 	}
+}
+
+func (db *DB) GetUser(id string) (User, error){
+	collection := db.session.DB("auth").C("users")
+
+	var user User
+	err := collection.Find(bson.M{"_id": id}).One(&user)
+
+	return user, err
 }
 
 func GetDBInstance() *DB {
