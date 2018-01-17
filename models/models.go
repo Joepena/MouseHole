@@ -51,7 +51,7 @@ func (db *DB) CreateCappedCollection(dbName string, collectionName string, capac
 	}
 }
 
-func (db *DB) GetUser(id string) (User, error){
+func (db *DB) GetUserById(id string) (User, error){
 	collection := db.session.DB("auth").C("users")
 
 	var user User

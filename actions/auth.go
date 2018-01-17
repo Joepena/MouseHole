@@ -5,10 +5,9 @@ import (
 	"github.com/gobuffalo/buffalo"
 	log "github.com/sirupsen/logrus"
 	"github.com/joepena/mouse_hole/models"
+	"github.com/pkg/errors"
 )
 
-// TODO: remove this from source later
-var SERVER_SECRET = []byte("057E3CE6B941756FD9CAB17D93C522F7C3745A78066A278E83999FFF547C5A8F")
 
 type MMClaims struct {
 	UserName string `json:"user_name"`
@@ -52,6 +51,35 @@ func createUserHandler(c buffalo.Context) error {
 	if err != nil {
 		log.Error(err)
 		return err
+	}
+
+	return nil
+}
+
+func loginHandler(c buffalo.Context) error {
+	email := c.Value("email").(string)
+	password := c.Value("password").(string)
+
+	u := models.User{
+		Email:        email,
+		Password:     password,
+	}
+
+	validUser := u.Authenticate()
+	if !validUser {
+		err := errors.New("invalid credentials")
+		log.Error(err)
+		c.Flash().Add("error", err.Error())
+		return err
+	} else {
+		// create valid session
+		s := c.Session()
+		s.Set("email", u.Email)
+		s.Set("DbName", u.DBName)
+		err := s.Save()
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil

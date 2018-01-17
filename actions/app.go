@@ -12,7 +12,11 @@ import (
 	"github.com/gobuffalo/packr"
 	"github.com/joepena/mouse_hole/api"
 	"github.com/joepena/mouse_hole/models"
+	"github.com/gorilla/sessions"
 )
+
+// TODO: remove this from source later
+var SERVER_SECRET = []byte("057E3CE6B941756FD9CAB17D93C522F7C3745A78066A278E83999FFF547C5A8F")
 
 // ENV is used to help switch settings based on where the
 // application is being run. Default is "development".
@@ -32,6 +36,7 @@ func App() *buffalo.App {
 		app = buffalo.New(buffalo.Options{
 			Env:         ENV,
 			SessionName: "_mouse_hole_session",
+			SessionStore: sessions.NewCookieStore(SERVER_SECRET),
 		})
 
 		// turn context to MMContext
